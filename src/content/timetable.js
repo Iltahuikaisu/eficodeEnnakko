@@ -21,6 +21,15 @@ const TimetableToEficode = () => {
     ) {
         itineraries {
             legs {
+                to {
+                    lat
+                    lon
+                    name
+                    stop {
+                        code
+                        name
+                    }
+                }
                 from {
                     lat
                     lon
