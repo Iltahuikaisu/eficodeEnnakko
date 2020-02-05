@@ -10,6 +10,8 @@ const TimetableToEficode = () => {
     const [data, newData] = useState()
     const [startPlaceData, newStartPlaceData] = useState()
     const [destinationPlaceData, newDestinationPlaceData] = useState()
+    const [timeUntilNextLeave, newTimeUntilNext] =useState()
+    const dataSetters = {newData, newStartPlaceData, newDestinationPlaceData}
     if (!startPlaceData) {
         newStartPlaceData('loading')
         Geo('Pohjoinen Rautatiekatu 25, Helsinki').then((respGeo) => {
@@ -76,14 +78,17 @@ const TimetableToEficode = () => {
             )
         }
 
-        console.log(data)
-
-        console.log(data.data.plan.itineraries)
         return(
-            <div>
-                <ListOptions listOfItineraries={data.data.plan.itineraries}
-                             start = {startPlaceData} destination = {destinationPlaceData} />
-            </div>
+            <>
+                <div>
+                    <BusTimer nextLeave = {timeUntilNextLeave}
+                              dataSetters = {dataSetters}/>
+                </div>
+                <div>
+                    <ListOptions listOfItineraries={data.data.plan.itineraries}
+                                 start = {startPlaceData} destination = {destinationPlaceData} />
+                </div>
+            </>
         )
 
 }
