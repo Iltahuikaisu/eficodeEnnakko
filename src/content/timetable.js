@@ -7,16 +7,34 @@ const client = new ApolloClient({
     uri:'https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql'});
 
 const TimetableToEficode = () => {
-    const [data, newData] = useState();
-    if (!data) {
-        console.log('before data fetch')
+    const [data, newData] = useState()
+    const [startPlaceData, newStartPlaceData] = useState()
+    const [destinationPlaceData, newDestinationPlaceData] = useState()
+    if (!startPlaceData) {
+        newStartPlaceData('loading')
+        Geo('Pohjoinen Rautatiekatu, 25').then((respGeo) => {
 
-        Geo(' Pohjoinen Rautatiekatu, 25').then((respGeo) => {
+            newStartPlaceData({lon:respGeo.data.bbox[3], lat:respGeo.data.bbox[2],name:'Eficode'})
+        })
+    }
+    if (!destinationPlaceData) {
+        newDestinationPlaceData('loading')
+        Geo('Mannerheimintie, 30, Helsinki').then((respGeo) => {
+            console.log('response to destination geo')
+            console.log(respGeo)
+            newDestinationPlaceData({lon:respGeo.data.bbox[3], lat:respGeo.data.bbox[2],name:'Eduskunta'})
+        })
+    }
+    if (destinationPlaceData && startPlaceData) {
+        if (destinationPlaceData !=='loading' && startPlaceData !=='loading' && !data) {
+
+            newData('queryStarted')
+            console.log('Started query')
             client.query({
                     query: gql`{
         plan(
-            from: {lon: ${respGeo.data.bbox[2]}, lat: ${respGeo.data.bbox[3]}}
-        to: {lat: 60.175294, lon: 24.684855}
+            from: {lon: ${startPlaceData.lon}, lat: ${startPlaceData.lon}}
+        to: {lat: ${destinationPlaceData.lat}, lon: ${destinationPlaceData.lon}}
         numItineraries: 3
     ) {
         itineraries {
@@ -50,36 +68,33 @@ const TimetableToEficode = () => {
         }
     }
 }`
+
                 }
             ).then((resp) => {
                 console.log('response to graphQL')
                 newData(resp)
                 console.log(resp)
             })
+        }
 
-        })
-        if(!data) {
+    }
+        if(!data || data === 'queryStarted') {
             return(
                 <div>
                     loading
                 </div>
             )
-        } else {
-            console.log(data)
-            return(
-                <div>
-                    Next bus leaves at
-                </div>
-            )
         }
-    } else {
+
+        console.log(data)
+
         console.log(data.data.plan.itineraries)
         return(
             <div>
                 <ListOptions listOfItineraries={data.data.plan.itineraries} />
             </div>
         )
-    }
+
 }
 
 export default TimetableToEficode
