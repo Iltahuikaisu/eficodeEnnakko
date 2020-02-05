@@ -12,61 +12,51 @@ const TimetableToEficode = () => {
     const [destinationPlaceData, newDestinationPlaceData] = useState()
     if (!startPlaceData) {
         newStartPlaceData('loading')
-        Geo('Pohjoinen Rautatiekatu, 25').then((respGeo) => {
+        Geo('Pohjoinen Rautatiekatu 25, Helsinki').then((respGeo) => {
+            console.log(respGeo.data.features[0].geometry.coordinates[0])
+            newStartPlaceData({lon:respGeo.data.features[0].geometry.coordinates[0],
+                lat:respGeo.data.features[0].geometry.coordinates[1], name:'Eficode'})
 
-            newStartPlaceData({lon:respGeo.data.bbox[3], lat:respGeo.data.bbox[2],name:'Eficode'})
         })
     }
     if (!destinationPlaceData) {
         newDestinationPlaceData('loading')
-        Geo('Mannerheimintie, 30, Helsinki').then((respGeo) => {
+        Geo('Mannerheimintie 30, Helsinki').then((respGeo) => {
             console.log('response to destination geo')
-            console.log(respGeo)
-            newDestinationPlaceData({lon:respGeo.data.bbox[3], lat:respGeo.data.bbox[2],name:'Eduskunta'})
+            console.log(respGeo.data.features[0].geometry.coordinates[0])
+            newDestinationPlaceData({lon:respGeo.data.features[0].geometry.coordinates[0]
+                , lat:respGeo.data.features[0].geometry.coordinates[1],name:'Eduskunta'})
         })
     }
     if (destinationPlaceData && startPlaceData) {
         if (destinationPlaceData !=='loading' && startPlaceData !=='loading' && !data) {
-
             newData('queryStarted')
             console.log('Started query')
             client.query({
                     query: gql`{
-        plan(
-            from: {lon: ${startPlaceData.lon}, lat: ${startPlaceData.lon}}
-        to: {lat: ${destinationPlaceData.lat}, lon: ${destinationPlaceData.lon}}
-        numItineraries: 3
-    ) {
-        itineraries {
-            legs {
-                to {
-                    lat
-                    lon
-                    name
-                    stop {
-                        code
-                        name
-                    }
-                }
-                from {
-                    lat
-                    lon
-                    name
-                    stop {
-                        code
-                        name
-                    }
-                }
-                startTime
-                endTime
-                mode
-                duration
-                realTime
-                distance
-                transitLeg
-            }
+  plan(
+    from: {lat: ${startPlaceData.lat}, lon: ${startPlaceData.lon}}
+    to: {lat: ${destinationPlaceData.lat}, lon: ${destinationPlaceData.lon}}
+    numItineraries: 3
+  ) {
+    itineraries {
+      legs {
+        startTime
+        from {
+            name
         }
+        to {
+            name
+        }
+        endTime
+        mode
+        duration
+        realTime
+        distance
+        transitLeg
+      }
     }
+  }
 }`
 
                 }
@@ -91,7 +81,8 @@ const TimetableToEficode = () => {
         console.log(data.data.plan.itineraries)
         return(
             <div>
-                <ListOptions listOfItineraries={data.data.plan.itineraries} />
+                <ListOptions listOfItineraries={data.data.plan.itineraries}
+                             start = {startPlaceData} destination = {destinationPlaceData} />
             </div>
         )
 
