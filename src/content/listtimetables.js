@@ -6,7 +6,6 @@ const SingleRoute = (props) => {
     const destination = props.destination
     console.log("route from singleroute")
     const routeInReadableForm = route.reduce((acc, current)=> {
-        const timeOfTransit = route.endTime - route.startTime
         var startTime = new Date(current.startTime).toLocaleTimeString(undefined,{
             hourCycle:"h24", timeStyle:"short", hour:"2-digit", minute:"2-digit"
                })

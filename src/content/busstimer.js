@@ -1,22 +1,27 @@
 import React, {useState} from "react";
+const second = (props) => {
+    console.log('second')
+    const decrease = 1000;
+    props.setTimer((state)=>{
+        if (state <=0) {
+             window.location.reload()
+        }
+        return(state - decrease)
+    })
+}
 
-var intervalSet = false;
 const Timer =  (props) => {
-    debugger
     const [timer, setTimer] = useState(props.time)
     const [isTimeGoing, setIsTimeGoing] = useState(false)
-    const second = () => {
-        console.log('second')
-        setTimer(timer - 1000)
-    }
     if (!isTimeGoing)  {
-        setInterval(second,1000)
+        props.dataSetters.newWaitTime(props.time)
+        setInterval(()=>second({timer:timer, setTimer:setTimer}),1000)
         setIsTimeGoing(true)
     }
 
     return(
         <div>
-            {timer}
+            {Math.floor(timer/(1000*60)) + ":" + (Math.floor(timer/(1000))%60)}
         </div>
     )
 }

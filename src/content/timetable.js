@@ -12,7 +12,7 @@ const TimetableToEficode = () => {
     const [startPlaceData, newStartPlaceData] = useState()
     const [destinationPlaceData, newDestinationPlaceData] = useState()
     const [waitTime, newWaitTime] = useState()
-    const dataSetters = {newData, newStartPlaceData, newDestinationPlaceData}
+    const dataSetters = {newData, newStartPlaceData, newDestinationPlaceData,newWaitTime}
     if (!startPlaceData) {
         newStartPlaceData('loading')
         Geo('Pohjoinen Rautatiekatu 25, Helsinki').then((respGeo) => {
@@ -26,7 +26,7 @@ const TimetableToEficode = () => {
     }
     if (!destinationPlaceData) {
         newDestinationPlaceData('loading')
-        Geo('Mannerheimintie 30, Helsinki').then((respGeo) => {
+        Geo('Männikkötie 6, Helsinki').then((respGeo) => {
             console.log('response to destination geo')
             console.log(respGeo.data.features[0].geometry.coordinates[0])
             newDestinationPlaceData({
@@ -70,8 +70,8 @@ const TimetableToEficode = () => {
             ).then((resp) => {
                 console.log('response to graphQL')
                 console.log(resp)
-                newWaitTime(-resp.data.plan.itineraries[1].legs[0].startTime
-                + resp.data.plan.itineraries[1].legs[0].endTime)
+                newWaitTime(resp.data.plan.itineraries[0].legs[0].startTime
+                - new Date().getTime())
                 newData(resp)
             })
 
