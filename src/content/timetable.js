@@ -98,7 +98,6 @@ const TimetableToEficode = () => {
 
                     }
                 ).then((resp) => {
-                    console.log(resp)
                     if (resp.data.plan.itineraries[0]) {
 
                         newWaitTime(resp.data.plan.itineraries[0].legs[0].startTime
@@ -120,7 +119,6 @@ const TimetableToEficode = () => {
         newStartPlaceData('loading')
         newEndPlaceData('loading')
         Geo(routeAddresses.start.address).then((respGeo) => {
-            console.log(respGeo)
             var name
             if (routeAddresses.start.address === 'Pohjoinen Rautatiekatu 25, Helsinki') {
                 name = 'Eficode'
@@ -137,7 +135,6 @@ const TimetableToEficode = () => {
 
             newEndPlaceData('loading')
         Geo(routeAddresses.end.address).then((respGeo) => {
-            console.log(respGeo)
             var name
             if (routeAddresses.end.address === 'Pohjoinen Rautatiekatu 25, Helsinki') {
                 name = 'Eficode'
