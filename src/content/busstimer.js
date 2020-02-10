@@ -3,9 +3,11 @@ const second = (props) => {
     const decrease = 1000;
 
     props.setTimer((state)=>{
-        if (state <=-5000) {
-            alert('you should run now')
-             window.location.reload()
+        if (Math.floor(state/1000) ===-5) {
+            console.log(state)
+            props.dataSetters.setTimeIsUp((value)=>{
+                return(value+1)
+            })
         }
         return(state - decrease)
     })
@@ -14,14 +16,17 @@ const second = (props) => {
 const Timer =  (props) => {
     const [timer, setTimer] = useState(props.time)
     var intervalId = 1
+
     useEffect(()=>{
-        intervalId=setInterval(()=>second({timer:timer, setTimer:setTimer}),1000)
+        setTimer(props.time)
+        intervalId=setInterval(()=>second({timer:timer, setTimer:setTimer,
+            dataSetters:props.dataSetters}),1000)
         return(
             ()=>{
                 clearInterval(intervalId)
             }
         )
-    },[intervalId])
+    },[intervalId, props.dataSetters.timeIsUp])
 
 
     return(

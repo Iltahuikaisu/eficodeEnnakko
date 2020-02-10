@@ -51,23 +51,26 @@ const TimetableToEficode = () => {
     const [endPlaceData, newEndPlaceData] = useState()
     const [waitTime, newWaitTime] = useState()
     const [newDestination, setNewDestination] = useState()
-    const [isErrorInInput, setErrorInInput] = useState(false)
+    const [isErrorInInput, setErrorInInput] = useState({value:false, error:""})
+    const [timeIsUp, setTimeIsUp] = useState(0)
     const [routeAddresses, setRouteAddresses] = useState(
         {start:{address:'Pohjoinen Rautatiekatu 25, Helsinki',name:'Eficode'},
                     end:{address:'Männikkötie 6, Helsinki',name:'Maunulan kotipizza'}})
-    const dataSetters = {newData, newStartPlaceData, newDestinationPlaceData: newEndPlaceData,
+    const dataSetters = {timeIsUp, setTimeIsUp,newData, newStartPlaceData, newDestinationPlaceData: newEndPlaceData,
         newWaitTime,setRouteAddresses,newDestination,routeAddresses,newEndPlaceData}
 
 
     useEffect(()=>{
         if(startPlaceData && endPlaceData) {
             if (startPlaceData !== 'loading' && endPlaceData !== 'loading') {
+                client.clearStore().then(()=> {
                 client.query({
                         query: gql`{
   plan(
     from: {lat: ${startPlaceData.lat}, lon: ${startPlaceData.lon}}
     to: {lat: ${endPlaceData.lat}, lon: ${endPlaceData.lon}}
     numItineraries: 5
+    maxWalkDistance: 500
   ) {
     itineraries {
       legs {
@@ -98,26 +101,33 @@ const TimetableToEficode = () => {
 
                     }
                 ).then((resp) => {
-                    if (resp.data.plan.itineraries[0]) {
+                    console.log(resp)
 
-                        newWaitTime(resp.data.plan.itineraries[0].legs[0].startTime
-                            - new Date().getTime())
-                        setErrorInInput(false)
+                    if (resp.data.plan.itineraries[0]) {
+                        if(resp.data.plan.itineraries[0].length ===1) {
+                            setErrorInInput({value:true, error:"Too close, just walk"})
+                        } else {
+                            newWaitTime(resp.data.plan.itineraries[0].legs[0].startTime
+                                - new Date().getTime())
+                            setErrorInInput({value:false, error:"no problem"})
+                        }
                     } else {
-                        setErrorInInput(true)
+                        setErrorInInput({value:true, error:"No geocoding match in Helsinki"})
                     }
 
                     newData(resp)
                 })
+            })
             }
         }
 
 
-    },[startPlaceData,endPlaceData])
+    },[startPlaceData,endPlaceData,timeIsUp])
 
     useEffect(() => {
         newStartPlaceData('loading')
         newEndPlaceData('loading')
+        console.log('geo')
         Geo(routeAddresses.start.address).then((respGeo) => {
             var name
             if (routeAddresses.start.address === 'Pohjoinen Rautatiekatu 25, Helsinki') {
@@ -148,7 +158,7 @@ const TimetableToEficode = () => {
         })
         },[routeAddresses]
     )
-    if(isErrorInInput) {
+    if(isErrorInInput.value) {
         return(
             <div>
                 <h3>Change the non-Eficode destination</h3>
@@ -160,6 +170,7 @@ const TimetableToEficode = () => {
                         setNewRoute({dataSetters:dataSetters})}}>Submit</button>
                     <div>{newDestination}</div>
                     <h3>Error in input, try again</h3>
+                    <h4>Error: {isErrorInInput.error}</h4>
                     <p>
                         Working formula is
                         'Nameoftheroad 42, Helsinki'
