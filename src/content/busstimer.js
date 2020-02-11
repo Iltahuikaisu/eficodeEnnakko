@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 const second = (props) => {
     var startTime = props.dataSetters.data.data.plan.itineraries[0].legs[0].startTime
-    console.log(startTime)
     props.setTimer((state)=>{
         if (Math.floor(state/1000) ===-5) {
             props.dataSetters.setTimeIsUp((value)=>{
@@ -17,7 +16,6 @@ const Timer =  (props) => {
 
 
     useEffect(()=>{
-        console.log('setinterval')
         intervalId=setInterval(()=>second({timer:timer, setTimer:setTimer,
             dataSetters:props.dataSetters}),1000)
         return(
