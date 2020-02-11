@@ -101,7 +101,6 @@ const TimetableToEficode = () => {
 
                     }
                 ).then((resp) => {
-                    console.log(resp)
 
                     if (resp.data.plan.itineraries[0]) {
                         if(resp.data.plan.itineraries[0].length ===1) {
@@ -127,7 +126,6 @@ const TimetableToEficode = () => {
     useEffect(() => {
         newStartPlaceData('loading')
         newEndPlaceData('loading')
-        console.log('geo')
         Geo(routeAddresses.start.address).then((respGeo) => {
             var name
             if (routeAddresses.start.address === 'Pohjoinen Rautatiekatu 25, Helsinki') {

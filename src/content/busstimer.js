@@ -4,7 +4,6 @@ const second = (props) => {
 
     props.setTimer((state)=>{
         if (Math.floor(state/1000) ===-5) {
-            console.log(state)
             props.dataSetters.setTimeIsUp((value)=>{
                 return(value+1)
             })
@@ -12,10 +11,10 @@ const second = (props) => {
         return(state - decrease)
     })
 }
-
+var intervalId = 1
 const Timer =  (props) => {
     const [timer, setTimer] = useState(props.time)
-    var intervalId = 1
+
 
     useEffect(()=>{
         setTimer(props.time)
@@ -27,7 +26,6 @@ const Timer =  (props) => {
             }
         )
     },[intervalId, props.dataSetters.timeIsUp])
-
 
     return(
         <div>
