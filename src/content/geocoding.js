@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 const Geocoding = (address) => {
-    return(axios.get(`http://api.digitransit.fi/geocoding/v1/search?text=${address}&sources=oa`)
+    return(axios.get(`https://api.digitransit.fi/geocoding/v1/search?text=${address}&sources=oa`)
     )
 }
 

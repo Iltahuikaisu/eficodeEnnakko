@@ -1,10 +1,9 @@
 import React from 'react'
 
 const SingleRoute = (props) => {
-    console.log(props)
-    const route = props.route
+    var route = props.route
     const destination = props.destination
-    console.log("route from singleroute")
+
     const routeInReadableForm = route.reduce((acc, current)=> {
         var startTime = new Date(current.startTime).toLocaleTimeString(undefined,{
             hourCycle:"h24", timeStyle:"short", hour:"2-digit", minute:"2-digit"
@@ -14,7 +13,12 @@ const SingleRoute = (props) => {
         })
         var endPoint
         var startPoint
-        var modeOfTransit = current.mode.toLowerCase()
+        var modeOfTransit
+        if (current.route) {
+            modeOfTransit = current.mode.toLowerCase() + " " + current.route.shortName
+        } else {
+            modeOfTransit = "walk"
+        }
         if (current.from.name ==="Origin") {
             startPoint = "Eficode"
         } else {

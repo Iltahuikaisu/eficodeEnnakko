@@ -1,27 +1,35 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 const second = (props) => {
-    console.log('second')
     const decrease = 1000;
+
     props.setTimer((state)=>{
-        if (state <=0) {
-             window.location.reload()
+        if (Math.floor(state/1000) ===-5) {
+            props.dataSetters.setTimeIsUp((value)=>{
+                return(value+1)
+            })
         }
         return(state - decrease)
     })
 }
-
+var intervalId = 1
 const Timer =  (props) => {
     const [timer, setTimer] = useState(props.time)
-    const [isTimeGoing, setIsTimeGoing] = useState(false)
-    if (!isTimeGoing)  {
-        props.dataSetters.newWaitTime(props.time)
-        setInterval(()=>second({timer:timer, setTimer:setTimer}),1000)
-        setIsTimeGoing(true)
-    }
+
+
+    useEffect(()=>{
+        setTimer(props.time)
+        intervalId=setInterval(()=>second({timer:timer, setTimer:setTimer,
+            dataSetters:props.dataSetters}),1000)
+        return(
+            ()=>{
+                clearInterval(intervalId)
+            }
+        )
+    },[intervalId, props.dataSetters.timeIsUp])
 
     return(
         <div>
-            {Math.floor(timer/(1000*60)) + ":" + (Math.floor(timer/(1000))%60)}
+            {Math.floor(Math.abs(timer/(1000*60))) + ":" + (Math.floor(timer/(1000))%60)}
         </div>
     )
 }
