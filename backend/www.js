@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-console.log(file.__source)
 app.use(express.static('./build'))
 const PORT = process.env.PORT || 3001
 

@@ -1,6 +1,7 @@
 FROM node:lts-alpine3.9
-COPY --chown=node:node backend .
+COPY . .
 RUN yarn install
-COPY --chown=node:node build ./build
+RUN yarn run build
+RUN cp -r build /backend/
 EXPOSE 3001
-CMD ["node","www.js"]
+CMD ["node","backend/www.js"]

@@ -56,7 +56,7 @@ const TimetableToEficode = () => {
     const [routeAddresses, setRouteAddresses] = useState(
         {start:{address:'Pohjoinen Rautatiekatu 25, Helsinki',name:'Eficode'},
                     end:{address:'Männikkötie 6, Helsinki',name:'Maunulan kotipizza'}})
-    const dataSetters = {timeIsUp, setTimeIsUp,newData, newStartPlaceData, newDestinationPlaceData: newEndPlaceData,
+    const dataSetters = {timeIsUp, setTimeIsUp,data,newData, newStartPlaceData, newDestinationPlaceData: newEndPlaceData,
         newWaitTime,setRouteAddresses,newDestination,routeAddresses,newEndPlaceData}
 
 
@@ -101,7 +101,7 @@ const TimetableToEficode = () => {
 
                     }
                 ).then((resp) => {
-
+                    console.log(resp)
                     if (resp.data.plan.itineraries[0]) {
                         if(resp.data.plan.itineraries[0].length ===1) {
                             setErrorInInput({value:true, error:"Too close, just walk"})
@@ -156,6 +156,15 @@ const TimetableToEficode = () => {
         })
         },[routeAddresses]
     )
+
+    if (!data || data === 'queryStarted') {
+        return (
+            <div>
+                loading
+            </div>
+        )
+    }
+
     if(isErrorInInput.value) {
         return(
             <div>
@@ -163,9 +172,9 @@ const TimetableToEficode = () => {
                 <form>
                     <input onChange={(event)=> {
                         setNewDestination(event.target.value)}}/>
-                    <button onClick={(event)=>{
+                    <input type="submit" name={"submitButton"} onClick={(event)=>{
                         event.preventDefault()
-                        setNewRoute({dataSetters:dataSetters})}}>Submit</button>
+                        setNewRoute({dataSetters:dataSetters})}}/>
                     <div>{newDestination}</div>
                     <h3>Error in input, try again</h3>
                     <h4>Error: {isErrorInInput.error}</h4>
@@ -180,13 +189,7 @@ const TimetableToEficode = () => {
             </div>
         )
     }
-    if (!data || data === 'queryStarted') {
-        return (
-            <div>
-                loading
-            </div>
-        )
-    }
+
         return (
             <>
                 <h3>Change the non-Eficode destination</h3>
