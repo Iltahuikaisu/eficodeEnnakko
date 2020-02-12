@@ -7,7 +7,7 @@ function App() {
   return (
  <div>
      <h2>
-         Eficode ennakko
+         Eficode routing
      </h2>
      <TimetableToEficode/>
  </div>

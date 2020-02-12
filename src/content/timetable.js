@@ -101,7 +101,6 @@ const TimetableToEficode = () => {
 
                     }
                 ).then((resp) => {
-                    console.log(resp)
                     if (resp.data.plan.itineraries[0]) {
                         if(resp.data.plan.itineraries[0].length ===1) {
                             setErrorInInput({value:true, error:"Too close, just walk"})
